@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial;
+  font-size: 17px;
+}
+
+#myVideo {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  min-width: 100%; 
+  min-height: 100%;
+  opacity:0.5;
+}
+
+.content {
+  position: fixed;
+  left:0;
+  bottom: 20%;
+  background: rgba(0, 0, 0, 0.5);
+  color: #f1f1f1;
+  width: 100%;
+  padding: 20px;
+}
+
+#myBtn {
+  width: 200px;
+  font-size: 18px;
+  padding: 10px;
+  border: none;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+}
+
+#myBtn:hover {
+  background: #ddd;
+  color: black;
+}
+</style>
+{% endblock %}
+{% block body %}
+
+<div class="main-wrapper">
+    <!-- section-1 -->
+    <div class="section section-1">
+        <div class="section-1-background">
+            <video style="position: relative;" id="videobcg" preload="auto" autoplay="true" loop="loop" muted="muted" volume="0">
+                <source src="{% static 'maps/assets/video/korea.mp4' %}" type="video/mp4">
+            </video>
+        </div>
+        <div class="content">
+            <div class="container">
+                <form action="#">
+                    <div class="row">
+                        <h2 style="text-align:center;width:100%;">Sign In</h2>
+                        <br>
+
+                        <div class="col">
+                            <a href="{%url "social:begin" "facebook" %}" class="fb btn"  style="width:100%">
+                            <i class="fa fa-facebook fa-fw"></i> Login with Facebook
+                            </a>
+                            <a href="{%url "social:begin" "kakao" %}" class="kakao btn" style="width:100%">
+                            <i class="fa fa-kakao fa-fw"></i> Login with Kakao
+                            </a>
+                            <a href="{%url "social:begin" "google-oauth2" %}" class="naver btn"  style="width:100%"><i class="fa fa-naver fa-fw">
+                        </i> Login with Naver
+                            </a>
+                        </div>
+
+                        <div class="col">
+                            <input type="text" name="username" placeholder="Username" required>
+                            <input type="password" name="password" placeholder="Password" required>
+                            <button style="padding:5px" type="submit" class="signupbtn">Sign In</button>
+                            <button style="padding:5px" type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Cancel</button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    {% endblock %}

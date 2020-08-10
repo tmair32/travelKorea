@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+<div id="id02" class="modal">
+  <form class="modal-contentsigninup" action="/myaccounts/signup/" method="POST">
+    {% csrf_token %}
+    <div id="signupform" class="container" style="flow">
+      <h1 style="text:bold;text-align:center">회원가입</h1>
+      <hr>
+
+      <label for="email"><b>이메일</b></label><br>
+      <input style="width:70%;" class="sign_in_up_input" type="text" v-model="email" placeholder="Enter Email" name="email" required>
+      <input style="width:25%;" class="idcheck" type="button" @click="checkUser" value="중복확인">
+      <!--<input style="width:25%;" class="okbutton" type="button" @click="checkUser" value="사용가능">-->
+
+      <label for="password"><b>비밀번호</b></label>
+      <input class="sign_in_up_input" type="password" v-model="password1" placeholder="Enter Password" name="password1" required>
+
+      <label for="password-repeat"><b>비밀번호 재입력</b></label>
+      <input class="sign_in_up_input" id="id_password2" v-model="password2" type="password" placeholder="Repeat Password" name="password2" required>
+      <p>[[ checkmsg ]]</p>
+
+      <label for="nickname"><b>이름</b></label>
+      <input class="sign_in_up_input" v-model="nickname" type="text" placeholder="Enter Nickname" name="username" required>
+      <p>[[ namemsg ]]</p>
+
+       <label for="birth"><b>생년월일(예시 : '19921201')</b></label><br>
+      <input class="sign_in_up_input" type="test" name="birth" placeholder="Enter Your Birth" required>
+
+      <label for="gender"><b>성별</b></label><br>
+      <input style="margin-top:10px;margin-bottom:10px" type="radio" name="gender" value="남" required>남자 &nbsp;
+      <input style="margin-top:10px;margin-bottom:10px" type="radio" name="gender" value="여" required>여자<br>
+
+
+
+      <div class="clearfix">
+        <input type="submit" class="sign_in_up" value="Sign Up">
+        <input type="button" onclick="document.getElementById('id02').style.display='none'" class="cancel" value="Cancel">
+      </div>
+    </div>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+  // Get the modal
+  var modal = document.getElementById('id02');
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+  
+  // password validate message
+  if (window.location.href === "http://127.0.0.1:8000/myaccounts/signup/") {
+    alert("비밀번호를 정확히 입력해주세요.")
+  }
+
+  const app = new Vue ({
+    el : "#signupform",
+    delimiters: ['[[', ']]'],
+    data : {
+      email: '',
+      nickname: '',
+      password1 : '',
+      password2 : '',
+      checkmsg: '',
+      namemsg:'',
+      namelist: [],
+    },
+    methods: {
+      getname() {
+        this.namelist = []
+        url = '/myaccounts/user'
+        axios.get(url).then(response => {
+          const users = response.data
+          users.forEach(user => {
+            this.namelist.push(user.username)
+          })
+        })
+      },
+      checkNickname() {
+        console.log(this.nickname)
+        console.log(this.namemsg)
+        console.log(this.namelist)
+        console.log(this.namelist.indexOf(this.nickname))
+        if (this.namelist != []) {
+          if (this.namelist.indexOf(this.nickname) >= 0) {
+            this.namemsg = "이미 존재하는 닉네임입니다."
+          } else {
+            this.namemsg = "사용가능한 닉네임입니다."
+          }
+        }
+      },
+      checkPassword() {
+        if (this.password1 != this.password2) {
+          this.checkmsg = "패스워드가 일치하지 않습니다."
+        } else {
+          this.checkmsg = "패스워드가 일치합니다."
+        }
+      },
+      checkUser() {
+        this.getname()
+        url = '/myaccounts/user'
+        axios.get(url).then(response => {
+          const users = response.data
+          let in_email = false
+          console.log(users)
+          if (this.email == '') {
+            alert("이메일을 작성해주세요.")
+          } else {
+              users.forEach(user => {
+                console.log(user)
+              if (this.email == user.email) {
+                console.log(user.email)
+                in_email = true
+                console.log(in_email)
+              }
+            })
+
+            if (in_email == true) {
+              alert("이미 존재하는 이메일입니다.")
+            } else {
+              // if ('@' in this.email) {
+                alert("사용 가능한 이메일입니다.")
+              // } else {
+                // alert("이메일 형식이 아닙니다.")
+              // }
+            }
+          }
+
+        })
+      }
+    },
+    watch : {
+      password2: function() {
+        this.checkPassword()
+      },
+      nickname: function() {
+        this.checkNickname()
+      }
+    },
+  })
+  </script>
+
+</body>
+</html>
+  

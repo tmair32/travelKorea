@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'accounts/stylesheets/style.css' %}">
+<!--지도관련-->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="{% static 'accounts/assets/js/util.js' %}"></script>
+<script src="{% static 'accounts/assets/js/skel.min.js' %}"></script>
+<script src="{% static 'accounts/assets/js/main.js' %}"></script>
+<link rel="stylesheet" href="{% static 'accounts/assets/css/main.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/assets/css/style.css' %}">
+<!--지도관련 끝-->
+{% endblock %}
+
+{% block body %}
+<div class="container" style="margin:0px">
+    <div class="imgbanner">
+        <!--<img src="https://source.unsplash.com/1600x400/?korea" width="100%">-->
+        <img src="{% static 'accounts/img/banner.jpg' %}" width="100%">
+    </div>
+    <div class="usercontent">
+        <h1 >{{user.username}}님의 MY Page</h1>
+    </div>
+
+    <div class="tabmenu">
+        <!--화면이 커질때 메뉴-->
+        <div id="menu1" class="tab">
+            <button class="tablinks" onclick="openMenu(event, 'Stamp')" id="defaultOpen1">Stamp</button>
+            <button class="tablinks" onclick="openMenu(event, 'Scrap')">Scrap</button>
+            <button class="tablinks" onclick="openMenu(event, 'Mypage')">Mypage</button>
+            <button class="tablinks" onclick="openMenu(event, 'changepw')">changepw</button>
+        </div>
+
+        <!--화면이 작아질때  메뉴-->
+        <div id="menu2" class="htab">
+            <button class="tablinks" onclick="openMenu(event, 'Stamp')" id="defaultOpen2">Stamp</button>
+            <button class="tablinks" onclick="openMenu(event, 'Scrap')">Scrap</button>
+            <button class="tablinks" onclick="openMenu(event, 'Mypage')">Mypage</button>
+            <button class="tablinks" onclick="openMenu(event, 'changepw')">changepw</button>
+        </div>
+        <!--하단메뉴-->
+        <div id="Stamp" class="tabcontent">
+            <div class="mapleft">
+                <!--MAP START-->
+                <div id="k-map" class="row">
+                    <div class="6u 12u$(small)">
+                        <div id="main-map" class="map-container">
+                            <div id="observe">
+                                <div id="SelectArea" style="display: none;">지역</div>
+                                <div id="SelectSigungu" style="display: none;">시군구</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="6u$ 12u$(small)">
+                        <div class="meta">
+                            <div id="ctprvn-nm" class="display"></div>
+                            <div id="sig-nm" class="display"></div>
+                            <div id="emd-nm" class="display"></div>
+                        </div>
+                    </div>
+                </div>
+                <script src="{% static 'accounts/assets/js/d3.v5.min.js' %}"></script>
+                <script src="{% static 'accounts/assets/js/topojson.min.js' %}"></script>
+                <script src="{% static 'accounts/assets/js/kor-map.js'%}"></script>
+                <!--MAP END-->
+            </div>
+            <div class="tableright" style="overflow:auto">
+                <table width="100%" border="1px solid">
+                    <colgroup>
+                        <col width="100%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>나만의 발자취</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td class="tdscroll" colspan="8" height="100%">
+                            <select id="stamplist" style="display:none;">
+                                <option value='1'>스탬프</option>
+                                {% for stamp in stamps %}
+                                    <option value="{{ stamp.inform.mapx }}" name="{{ stamp.inform.title }}">{{ stamp.inform.mapy }}</option>
+                                {% endfor %}
+                            </select>
+                            {% for stamp in stamps %}
+                                <p><a href="/maps/detail/{{stamp.inform.contentId}}/">{{ stamp.inform.title }}</a></p>
+                            {% endfor %}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="Scrap" class="tabcontent">
+            <div class="htab">
+                <button id="allbutton" class="htablinks" onclick="hopenmenu(event, 'all')" >전체</button>
+                <button class="htablinks" onclick="hopenmenu(event, 'tour')">관광</button>
+                <button class="htablinks" onclick="hopenmenu(event, 'culture')">문화</button>
+                <button class="htablinks" onclick="hopenmenu(event, 'festival')">축제</button>
+                <button class="htablinks" onclick="hopenmenu(event, 'outdoor')">야외</button>
+                <button class="htablinks" onclick="hopenmenu(event, 'hotel')">숙박</button>
+                <button class="htablinks" onclick="hopenmenu(event, 'shopping')">쇼핑</button>
+                <button class="htablinks" onclick="hopenmenu(event, 'food')">음식</button>
+            </div>
+
+            <div id="all" class="htabcontent">
+                {% for book in bookmark %}
+                <a href="/maps/detail/{{book.inform.contentId}}"><p>{{book.inform.title}} </p></a>
+                {% endfor %}
+            </div>
+            <div id="tour" class="htabcontent">
+                {% for book in bookmark %}
+                {% if book.contentType == 12 %}
+                <a href="/maps/detail/{{book.inform.contentId}}"><p>{{book.inform.title}} </p></a>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div id="culture" class="htabcontent">
+                {% for book in bookmark %}
+                {% if book.contentType == 14 %}
+                <a href="/maps/detail/{{book.inform.contentId}}"><p>{{book.inform.title}} </p></a>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div id="festival" class="htabcontent">
+                {% for book in bookmark %}
+                {% if book.contentType == 15 %}
+                <a href="/maps/detail/{{book.inform.contentId}}"><p>{{book.inform.title}} </p></a>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div id="outdoor" class="htabcontent">
+                {% for book in bookmark %}
+                {% if book.contentType == 28 %}
+                <a href="/maps/detail/{{book.inform.contentId}}"><p>{{book.inform.title}} </p></a>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div id="hotel" class="htabcontent">
+                {% for book in bookmark %}
+                {% if book.contentType == 32 %}
+                <a href="/maps/detail/{{book.inform.contentId}}"><p>{{book.inform.title}} </p></a>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div id="shopping" class="htabcontent">
+                {% for book in bookmark %}
+                {% if book.contentType == 38 %}
+                <a href="/maps/detail/{{book.inform.contentId}}"><p>{{book.inform.title}} </p></a>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div id="food" class="htabcontent">
+                {% for book in bookmark %}
+                {% if book.contentType == 39 %}
+                <a href="/maps/detail/{{book.inform.contentId}}"><p>{{book.inform.title}} </p></a>
+                {% endif %}
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <div id="Mypage" class="tabcontent" style="padding:0;">
+            <form action="/myaccounts/mypage/" method="POST">
+                {% csrf_token %}
+                <div id="signupform1" class="container" style="flow">
+                    <h1 style="text:bold;text-align:center">회원정보 수정</h1>
+                    <hr>
+                    <label for="email"><b>이메일</b></label>
+                    <input class="sign_in_up_input" type="text" name="email" value={{dbuser.email}} readonly>
+
+                    <label for="password"><b>현재비밀번호</b></label>
+                    <input class="sign_in_up_input" type="password" v-model="origin_password" placeholder="Enter Password" name="origin_password" required>
+
+                    <label for="nickname"><b>이름</b></label>
+                    <input class="sign_in_up_input" type="text" placeholder="Enter Nickname" name="username" value="{{dbuser.nickname}}" readonly>
+
+                    <label for="birth"><b>생년월일(예시 : '19921201')</b></label>
+                    <input class="sign_in_up_input"  type="text" name="birth" value="{{dbuser.birth}}">
+
+                    <label for="gender"><b>성별</b></label>
+                    {% if dbuser.gender == "남" %}
+                    <input class="genderradio" type="radio" name="gender" value="남" checked="true" required>남자
+                    <input class="genderradio"  type="radio" name="gender" value="여" required>여자<br><br>
+                    {% elif dbuser.gender == "여" %}
+                    <input class="genderradio"  type="radio" name="gender" value="남"  required>남자
+                    <input class="genderradio"  type="radio" name="gender" value="여" checked="true" required>여자<br><br>
+                    {% else %}
+                    <input class="genderradio"  type="radio" name="gender" value="남" required>남자
+                    <input class="genderradio"  type="radio" name="gender" value="여" required>여자<br><br>
+                    {% endif %}
+
+                    <div class="clearfix">
+                        <button style="padding:5px" type="submit" class="sign_in_up">Ok</button>
+                        <button style="padding:5px" type="reset" onclick="document.getElementById('id02').style.display='none'" class="cancel">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div id="changepw" class="tabcontent" >
+            <form action="/myaccounts/mypage/" method="POST">
+                {% csrf_token %}
+                <div id="signupform2" class="container" style="flow">
+                    <h1 style="text:bold;text-align:center">비밀번호 변경</h1>
+                    <hr>
+                    <label for="password"><b>현재비밀번호</b></label>
+                    <input class="sign_in_up_input" type="password" v-model="origin_password" placeholder="Enter Password" name="origin_password" required>
+
+                    <label for="password"><b>새비밀번호</b></label>
+                    <input class="sign_in_up_input" type="password" v-model="password1" placeholder="Enter Password" name="password1" required>
+
+                    <label for="password-repeat"><b>새비밀번호 재입력</b></label>
+                    <input class="sign_in_up_input" id="id_password2" v-model="password2" type="password" placeholder="Repeat Password" name="password2" required>
+                    <br>
+                    <div class="clearfix" style="margin-top:20px">
+                        <button style="padding:5px" type="submit" class="sign_in_up">Ok</button>
+                        <button style="padding:5px" type="reset" onclick="document.getElementById('id02').style.display='none'" class="cancel">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<!--새로탭-->
+<script>
+function openMenu(evt, menuName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  menu = document.getElementById(menuName)
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  menu.style.display = "block";
+  evt.currentTarget.className += " active";
+}
+ document.addEventListener("DOMContentLoaded", function(event) {
+    document.getElementById("allbutton").click();
+ });
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen1").click();
+document.getElementById("defaultOpen2").click();
+</script>
+<!--가로탭-->
+<script>
+function hopenmenu(evt, hmenuname) {
+  var i, htabcontent, htablinks;
+  htabcontent = document.getElementsByClassName("htabcontent");
+  for (i = 0; i < htabcontent.length; i++) {
+    htabcontent[i].style.display = "none";
+  }
+  htablinks = document.getElementsByClassName("htablinks");
+  for (i = 0; i < htablinks.length; i++) {
+    htablinks[i].className = htablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(hmenuname).style.display = "block";
+  evt.currentTarget.className += " active";
+    console.log({{bookmark.inform.title}})
+
+}
+</script>
+{% endblock %}
+

@@ -1,0 +1,61 @@
+{% load static %}
+
+<div class="header-wrapper"  style="background: rgba(0,0,0,0.4)">
+    <div class="header-contents" >
+        <!-- 타이틀 -->
+        <a href="/" class="a-nav-bar" onClick="#" style="color: white">
+            <img src="{% static 'travel/img/logo.png' %}" style="width:70px ">
+        </a>
+        <!-- 상단 메뉴 && 모바일 메뉴 -->
+        <div class="nav-bar">
+            <label id="menu" for="toggle" onclick>MENU</label>
+            <input type="checkbox" id="toggle">
+            <ul id="nav">
+                {% if user.is_authenticated %}
+                    {% if user.last_name %}
+                        <li>
+                            {{ user.last_name }}{{ user.first_name }}님 반갑습니다!
+                        </li>
+                    {% else %}
+                        <li>
+                            {{ user.username }}님 반갑습니다!
+                        </li>
+                    {% endif %}
+                {% endif %}
+                <li>
+                    <button onclick="location.href='/maps/travelreview/'" style="background-color:rgba(0,0,0,0.0);width:auto;font-size:16px;margin:0;color:white">Travel Review</button>
+                </li>
+                {% if user.is_authenticated %}
+                <li>
+                    <button onclick="location.href='/myaccounts/mypage/'"style="background-color:rgba(0,0,0,0.0);width:auto;font-size:16px;margin:0;color:white">My page</button>
+                </li>
+                <li>
+                    <button onclick="location.href='/myaccounts/logout/'" style="background-color:rgba(0,0,0,0.0);width:auto;font-size:16px;margin:0;color:white">Logout</button>
+                </li>
+                {% else %}
+                <li>
+                    <button id="signin" onclick="document.getElementById('id01').style.display='block';document.getElementById('id02').style.display='none'" style="color:white;background-color:rgba(0,0,0,0.0);width:auto;font-size:16px;margin:0;">Sign In</button>
+                </li>
+                <li>
+                    <button id="signup" onclick="document.getElementById('id02').style.display='block';document.getElementById('id01').style.display='none'" style="color:white;background-color:rgba(0,0,0,0.0);width:auto;font-size:16px;margin:0;">Sign Up</button>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+{% include 'myaccounts/signUp.html' %}
+{% include 'myaccounts/signIn.html' %}
+  
+<script>
+var signup = document.getElementById('signup');
+// var signin = document.getElementById('signin');
+if (window.location.href === "http://127.0.0.1:8000/myaccounts/signup/") {
+    signup.click()
+}
+if (window.location.href === "http://127.0.0.1:8000/myaccounts/login/") {
+    alert("해당 아이디가 존재하지 않습니다.")
+    signin.click()
+}
+</script>

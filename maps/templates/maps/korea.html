@@ -1,0 +1,20 @@
+{% load static %}
+	
+	<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/base/jquery-ui.css" />
+	<link rel="stylesheet" href="{% static 'maps/stylesheets/style.css' %}">
+	
+	{% block css %}
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+	<script src="{% static 'maps/assets/js/d3.js' %}"></script>
+	{% endblock %}
+	<div id="container" class="container">
+		
+		<div id="radio">
+			<span class="title">지명표시</span>
+	    <input type="radio" id="radio1" name="radio" value="on" checked><label for="radio1">On</label>
+	    <input type="radio" id="radio2" name="radio" value="off"><label for="radio2">Off</label>
+	  </div>
+	</div>
+	
+	<script src="{% static 'maps/assets/js/script.js' %}"></script>

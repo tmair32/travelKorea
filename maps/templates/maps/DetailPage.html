@@ -1,0 +1,559 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}DetailPage{% endblock %}
+{% block css %}
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900%7CMaterial+Icons" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'maps/stylesheets/DetailPage.css' %}">
+<link rel="stylesheet" href="{% static 'maps/stylesheets/comment.css' %}">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+{% endblock %}
+
+
+<!-- body -->
+{% block body %}
+<div id="detail" class="container" style="margin:0;">
+    <div>
+        <div class="imgbanner">
+            <!--<img src="https://source.unsplash.com/1600x400/?korea" width="100%">-->
+            <img src="{% static 'maps/img/banner2.png' %}" width="100%">
+        </div>
+        <div class="usercontent">
+            <h1 v-if="commoninfo[0]">
+                [[ commoninfo[0].title ]]
+                <!--나눠보자!!-->
+                {% if user.is_authenticated %}
+                <form id="bookmark" action="/maps/bookmark/{{ contentid }}" method="post">
+                    <label for="star1">
+                        {% if flag == "true" %}
+                        <img src="{% static 'maps/img/yellowstar.svg' %}" style="width:50px">
+                        {% else %}
+                        <img src="{% static 'maps/img/blackstar.svg' %}" style="width:50px">
+                        {% endif %}
+                    </label>
+                    <input id="star1" type="button" v-on:click="scrapclick" style="display:none">
+                </form>
+                {% else %}
+                <label for="star2"><img src="{% static 'maps/img/blackstar.svg' %}" style="width:30px"></label>
+                <button id="star2" v-on:click="gologin" style="display:none">scrap</button>
+                {% endif %}
+            </h1>
+
+        </div>
+    </div>
+    <div style="padding:10%;height:500px;margin-bottom:20px">
+        <div style="float:left; width:49%">
+            <div id="imageBanner">
+                <div class="slideshow-container" style="text-align:left;margin-bottom:20px;margin-top:50px;">
+                    <div class="mySlides fade" >
+                        <img  src="{% static 'maps/img/black.jpg' %}" width="100%">
+                        <p style="font-size:2vw;color:white;position:relative;bottom:150px;text-align:center; margin:auto">[[ commoninfo[0].title ]]</p>
+                    </div>
+
+                    <div class="mySlides fade" v-for="item in image" >
+                        <img :src="item" style="width:100%;">
+                    </div>
+
+                    <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                    <a class="next" onclick="plusSlides(1)">&#10095;</a>
+                </div>
+            </div>
+        </div>
+        <div class="menutabs">
+            <article class="tabs">
+                <input style="display:none;" checked id="one" name="tabs" type="radio">
+                <label class="choosetab" for="one">공통정보</label>
+                <input style="display:none;" id="two" name="tabs" type="radio" value="Two">
+                <label class="choosetab" for="two">상세정보</label>
+                <input style="display:none;" id="three" name="tabs" type="radio">
+                <label class="choosetab" for="three">평점남기기</label>
+                <input style="display:none;" id="four" name="tabs" type="radio">
+                <label class="choosetab" for="four">평점게시판</label>
+
+                <div class="panels"  style="height:400px;overflow:auto;margin-bottom:20px">
+                    <div class="panel">
+                        <!--공통정보-->
+                        <table class="type03" border="1px" style="margin-bottom:10px">
+                            <colgroup>
+                                <col width="20%">
+                                <col width="80%">
+                            </colgroup>
+                            <thead>
+                            <tr>
+                                <th>평점</th>
+                                <td>
+                                    <i id="starAvg1" class="far fa-star"></i>
+                                    <i id="starAvg2" class="far fa-star"></i>
+                                    <i id="starAvg3" class="far fa-star"></i>
+                                    <i id="starAvg4" class="far fa-star"></i>
+                                    <i id="starAvg5" class="far fa-star"></i>
+                                    <span class="avg" id="avgVal" style="display: none;">{{ avg.score__avg|floatformat:0 }}</span>
+                                </td>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th>주소</th>
+                                <td>[[commoninfo[0].addr1]] [[commoninfo[0].addr2]]</td>
+                            </tr>
+                            <tr>
+                                <th>우편번호</th>
+                                <td>[[commoninfo[0].zipCode]]</td>
+                            </tr>
+                            <tr>
+                                <th>홈페이지</th>
+                                <td><a :href="homepage">[[homepage]]</a></td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">설명</th>
+                            </tr>
+                            <tr>
+                                <td colspan="2">[[commoninfo[0].overview]]</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel">
+                        <!--상세정보-->
+                        <table class="type03" width="100%" border="1px"  style="margin-bottom:10%;">
+                            <colgroup>
+                                <col width="30%">
+                                <col width="70%">
+                            </colgroup>
+                            <tbody>
+                            <tr v-for="i in this.detail">
+                                <th>[[i.item]]</th>
+                                <td>[[i.value]]</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="panel" style="padding:0px">
+                        <!--평점 남기기-->
+                        <div class="scroetable">
+                            <form method="POST" action="/maps/addscore/{{contentid}}/">
+                                {% csrf_token %}
+                                <table class="type03" width="100%" border="1px">
+                                    <colgroup>
+                                        <col width="30%">
+                                        <col width="70%">
+                                    </colgroup>
+                                    <tbody>
+                                    {% if user.is_authenticated %}
+                                    <tr>
+                                        <th>이름</th>
+                                        <td id="nowUser">{{user.username}}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>
+                                            평점
+                                        </th>
+                                        <td style="display: none;">{{ score_form.score }}</td>
+                                        <td>
+                                            <i id="score1" class="far fa-star" @click="addscore(1)"></i>
+                                            <i id="score2" class="far fa-star" @click="addscore(2)"></i>
+                                            <i id="score3" class="far fa-star" @click="addscore(3)"></i>
+                                            <i id="score4" class="far fa-star" @click="addscore(4)"></i>
+                                            <i id="score5" class="far fa-star" @click="addscore(5)"></i>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">한줄평</th>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2" style="padding:0px">
+                                            <p style="text-align:center">{{ score_form.content }}</p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="2"><p style="text-align:center"><input class="sign_in_up" type="submit" value="평점등록"></p></td>
+                                    </tr>
+
+                                    {% else %}
+                                    <tr>
+                                        <th colspan="2"><p>평점 남기기는 로그인 후에 이용 가능합니다.</p></th>
+                                    </tr>
+                                    {% endif %}
+                                    </tbody>
+                                </table>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="panel">
+                        <div class="scoreboard">
+                            <table class="type03" width="100%" border="1px" >
+                                <colgroup>
+                                    <col width="15%">
+                                    <col width="70%">
+                                    <col width="15%">
+                                </colgroup>
+                                <thead>
+                                <tr>
+                                    <th>닉네임</th>
+                                    <th>한줄평</th>
+                                    <th>평점</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+
+                                {% if common.score_set.all %}
+                                {% for score in common.score_set.all %}
+                                <tr>
+                                    <td>{{ score.user.username }}</td>
+                                    <td>{{ score.content }}</td>
+                                    <td>
+                                        <meter min="0" max="5" value="{{score.score}}"/>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% else %}
+                                <tr>
+                                    <td colspan="3">등록된 평점이 없습니다.</td>
+                                </tr>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </article>
+        </div>
+        <!--평점남기기-->
+
+    </div>
+
+    <div class="section section-3">
+        <div class="section-content" style="width:100%">
+            <!-- 댓글 -->
+            <!-- <div class="fb-comments" data-numposts="5" data-colorscheme="dark" data-href="http://127.0.0.1:8000/maps/detail/{{contentid}}" data-width="100%" data-numposts="10"></div> -->
+            <div class="comment-list">
+                <div class="commentform">
+                    <form id="addcomment" action="/maps/comment/{{contentid}}/" method="POST" >
+                        {% csrf_token %}
+                        <input class="commentarea" type="text" id="content" name="content" placeholder="댓글을 입력하세요." required>
+                        <input class="myButton" type="button" v-on:click="commentsubmit" value="작성">
+                    </form>
+                </div>
+
+                <!--댓글 시작-->
+                <div class="comments-container">
+                    <ul id="comments-list" class="comments-list">
+                        {% if comments %}
+                        {% for comment in comments %}
+                        <li>
+                            <div class="comment-main-level">
+                                <div class="comment-avatar"><p>{{ comment.user.username }}</p></div>
+                                <div class="comment-box">
+                                    <div class="comment-head">
+                                        <h6 class="comment-name by-author"></h6>
+                                        <span>{{ comment.createdAt }}</span>
+                                        <a><i class="fa fa-trash" aria-hidden="true"></i></a>
+                                    </div>
+                                    <div class="comment-content">
+                                        {{ comment.content }}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                        {% else %}
+                        <li>
+                            <div class="comment-main-level">
+                                <div class="comment-avatar"><img src="{% static 'maps/img/nocomment.png' %}" alt=""></div>
+                                <div class="comment-box">
+                                    <div class="comment-head">
+                                        <h6 class="comment-name by-author">데헷 댓글 없쪄여^^ 찡긋</h6>
+                                        <span>로그인 후에 댓글을 남겨주세요! 히힛!!!</span>
+                                    </div>
+                                    <div class="comment-content">
+                                        댓글이 없다니깐용 뀨웅~♥
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+                <!--댓글 끝-->
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="fb-root"></div>
+<script async defer crossorigin="anonymous" src="https://connect.facebook.net/ko_KR/sdk.js#xfbml=1&version=v4.0"></script>
+
+
+<script>
+    var slideIndex = 1;
+    showSlides(slideIndex);
+
+    function plusSlides(n) {
+      showSlides(slideIndex += n);
+    }
+
+    function currentSlide(n) {
+      showSlides(slideIndex = n);
+    }
+
+    function showSlides(n) {
+      var i;
+      var slides = document.getElementsByClassName("mySlides");
+      var dots = document.getElementsByClassName("dot");
+      if (n > slides.length) {slideIndex = 1}
+      if (n < 1) {slideIndex = slides.length}
+      for (i = 0; i < slides.length; i++) {
+          slides[i].style.display = "none";
+      }
+      slides[slideIndex-1].style.display = "block";
+    }
+    </script>
+
+<!--이미지 자동 슬라이드-->
+<script>
+var myIndex = 0;
+carousel();
+
+function carousel() {
+    var i;
+    var x = document.getElementsByClassName("mySlides");
+    for (i = 0; i < x.length; i++) {
+       x[i].style.display = "none";
+    }
+    myIndex++;
+    if (myIndex > x.length) {myIndex = 1}
+    x[myIndex-1].style.display = "block";
+    setTimeout(carousel, 2000); // Change image every 2 seconds
+}
+</script>
+
+<script>
+var detail = new Vue ({
+            el: '#detail',
+            delimiters: ['[[', ']]'],
+            data() {
+                return{
+                    image:[],
+                    isScrap: false,
+                    commoninfo:[],
+                    detailinfo:[],
+                    homepage:'',
+                    detail:[],
+                }
+            },
+            created(){
+                this.create()
+                this.getAvg()
+                this.clickStar()
+            },
+            methods: {
+                create:function(){
+                    images=[]
+                    let base_URL="/maps/contentid/"+ {{contentid}} +"/"
+                    axios.get(base_URL)
+                    .then(response => {
+                        item = response.data
+                        for(i in item[0]){
+                            if(i=="addr2"&&item[0][i]=="없음"){
+                                item[0][i]=""
+                            }
+                            if(i=="overview"){
+                                item[0][i]=item[0][i].replace("<br>","")
+                                item[0][i]=item[0][i].replace("<br />","")
+                            }
+                        }
+                        this.commoninfo.push(item[0])
+                        this.detailinfo.push(this.commoninfo[0].detail[0])
+
+                        //이미지저장
+                        if(this.commoninfo[0].image == "['null']"){
+                        
+                        }else if(this.commoninfo[0].image!=null){
+                            images.push(this.commoninfo[0].image)
+                            this.image=images[0].split(',')
+                            for(i in this.image){
+                                this.image[i]= this.image[i].replace("'","")
+                                this.image[i]= this.image[i].replace("[","")
+                                this.image[i]= this.image[i].replace("]","")
+                                this.image[i]= this.image[i].replace("'","").trim()
+                            }
+                        }
+
+                        // 홈페이지 저장
+                        var homepage = new Array
+                        if (this.commoninfo[0].homepage.slice(-1) == ">"){
+                            for (var i = this.commoninfo[0].homepage.length-5; i > 0; i--) {
+                                var word = this.commoninfo[0].homepage[i]
+                                if ( word == '>') {
+                                    break
+                                }
+                                homepage.unshift(word)
+                            }
+                            this.homepage = homepage.join('')
+                        } else {
+                            this.homepage = homepage = this.commoninfo[0].homepage
+                        }
+
+
+                        for( i in this.detailinfo[0] ){
+                            if(i=="id"||i=="detailId"||this.detailinfo[0][i]=="정보 없음"||this.detailinfo[0][i]==""){
+                                continue
+                            }
+                            else{
+                                str=""
+                                switch(i){
+                                    case("subevent"):
+                                        str="부대시설"
+                                    break
+                                    case("startTime"):
+                                        str="시작날짜"
+                                    break
+                                    case("endTime"):
+                                        str="종료날짜"
+                                    break
+                                    case("parking"):
+                                        str="주차가능여부"
+                                    break
+                                    case("chkPet"):
+                                        str="반려동물가능여부"
+                                    break
+                                    case("chkBaby"):
+                                        if(this.detailinfo[0][i]=="1"){
+                                            this.detailinfo[0][i]="있음"
+                                        }
+                                        str="키즈존여부"
+                                    break
+                                    case("restDate"):
+                                        str="휴무일"
+                                    break
+                                    case("useTime"):
+                                        str="이용시간"
+                                    break
+                                    case("ageLimit"):
+                                        str="연령제한"
+                                    break
+                                    case("pay"):
+                                        str="이용요금"
+                                    break
+                                    case("barbeque"):
+                                        str="바베큐장"
+                                    break
+                                    case("refund"):
+                                        str="환불문의"
+                                    break
+                                    case("openPeriod"):
+                                        str="개방날짜"
+                                    break
+                                    case("discountInfo"):
+                                        str="할인정보"
+                                    break
+                                    case("chkCook"):
+                                        str="취사가능여부"
+                                    break
+                                    case("openTime"):
+                                        str="영업시간"
+                                    break
+                                    case("chkPack"):
+                                        str="포장여부"
+                                    break
+                                    case("chkSmoking"):
+                                        str="흡연가능여부"
+                                    break
+                                    case("infoCenter"):
+                                        str="인포센터"
+                                    break
+                                }
+                                a = this.detailinfo[0][i].indexOf('<br>')
+                                b = this.detailinfo[0][i].indexOf(' <br />')
+                                let result = ""
+                                if (a > -1 || b > -1) {
+                                    const d = this.detailinfo[0][i]
+                                    const temp = []
+                                    for (j = 0; j < d.length; j++) { 
+                                        if (d[j] == '<') {
+                                            j += 5
+                                        }else {
+                                            temp.push(d[j])
+                                        }
+                                    };
+                                    result = temp.join("")
+                                }
+                                if (result) {
+                                    this.detail.push({'item':str, 'value': result })
+                                } else {
+                                    this.detail.push({'item':str, 'value': this.detailinfo[0][i] })
+                                }
+                            }
+                        }
+                   });
+                },
+                scrapclick:function(){
+                    if(!this.isScrap){
+                        this.isScrap=!this.isScrap
+                    }else{
+                        this.isScrap=!this.isScrap
+                    }
+                    document.getElementById("bookmark").submit();
+                },
+                gologin:function(){
+                    alert("로그인을 했을 때 사용할 수 있는 기능입니다. 로그인을 해주세요!")
+                },
+                addscore:function(num){
+
+                    score = document.getElementById("id_score")
+                    score.value = num
+                    for (var i=0; i < num; i++) {
+                        star = document.getElementById(`score${i+1}`)
+                        console.log(star)
+                        if (star.className === 'far fa-star') {
+                            star.className = 'fas fa-star'
+                        }
+                    }
+                    for (var i=num; i < 5; i++) {
+                        star = document.getElementById(`score${i+1}`)
+                        if (star.className === 'fas fa-star') {
+                            star.className = 'far fa-star'
+                        }
+                    }
+                },
+                clickStar: function(){
+                    var star = document.getElementById("id_score")
+                    console.log(star)
+                    if(star) {
+                        console.log(star.value)
+                        this.addscore(star.value)
+                    }
+                },
+                getAvg: function(){
+                    var avg = document.getElementById("avgVal")
+                    for (var i=0; i < parseInt(avg.innerText); i++) {
+                        star = document.getElementById(`starAvg${i+1}`)
+                        if (star.className === 'far fa-star') {
+                            star.className = 'fas fa-star'
+                        }
+                    }
+                    for (var i=parseInt(avg.innerText); i < 5; i++) {
+                        star = document.getElementById(`score${i+1}`)
+                        if (star.className === 'fas fa-star') {
+                            star.className = 'far fa-star'
+                        }
+                    }
+                },
+                commentsubmit:function(){
+                    user = document.getElementById("nowUser")
+                    console.log(user)
+                    if(user == null){
+                        alert("로그인 후 이용해주세요")
+                    }else{
+                        document.getElementById("addcomment").submit()
+                    }
+                }
+            },
+});
+</script>
+{% endblock %}

@@ -1,0 +1,178 @@
+#k-map {
+	position: relative;
+	cursor: default;
+	font-size: 24px;
+	text-align: center;
+	margin: 0;
+	line-height: 1.2em;
+}
+
+#k-map.dark {
+	border: none;
+	color: #ffffff;
+	background: #303030;
+}
+/* text div */
+#k-map .meta {
+	display: inline-block;
+	position: relative;
+}
+
+#k-map h1, #k-map h2 {
+	margin: 1em 0 0.2em 0;
+	line-height: 0.8em;
+}
+
+#k-map.dark h1, #k-map.dark h2 {
+	color: #ffffff;
+}
+
+#k-map .display {
+	display: inline-block;
+	font-size: 0.3em;
+	/*width: 100%;*/
+	padding-bottom: 0.7em;
+}
+/* svg */
+#k-map .map-container {
+	width: 150%;
+	height:500px;
+	padding: 0 0 100% 0;
+	margin: 0;
+	overflow: visible;
+	display: inline-block;
+	position: relative;
+	right:60px;
+}
+
+#k-map .svg-content-responsive {
+	display: inline-block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	transform:skewX(-15deg);
+}
+
+#k-map .ocean {
+	fill: rgba(0,0,0,0.0);
+}
+
+#k-map.dark .ocean {
+	fill: #303030;
+}
+
+#k-map .area {
+	cursor: pointer;
+	stroke: #ccc;
+	stroke-width: 2px;
+}
+
+#k-map.dark .area {
+	stroke: #ffffff;
+}
+
+#k-map .back-button {
+	cursor: pointer;
+	pointer-events: all;
+	fill: none;
+	stroke: #303030;
+	stroke-width: 3px;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+#k-map.dark .back-button {
+	stroke: #ffffff;
+}
+
+#k-map .back-button text {
+	stroke: none;
+	fill: #303030;
+}
+
+#k-map.dark .back-button text {
+	fill: #ffffff;
+}
+/* tooltip */
+#tooltip {
+	font-size: 20px;
+	text-align: center;
+	line-height: 1.2em;
+	display: block;
+	position: absolute;
+	color: #ffffff;
+	background-color: rgba(49, 57, 37, 0.8);
+	padding: 2px;
+	border: 0px;
+	border-radius: 8px;
+	pointer-events: none;
+}
+
+#tooltip.dark {
+	color: #292929;
+	background-color: rgba(215, 215, 215, 0.8);
+}
+/* theme toggle */
+#k-map label {
+	display: inline-block;
+	line-height: 1em;
+}
+
+#k-map.dark label {
+	color: #ffffff;
+}
+
+#k-map .widget {
+	padding: 16px 0 20px 0;
+	font-size: 20px;
+}
+
+#k-map .switch {
+	position: relative;
+	display: inline-block;
+	width: 28px;
+	height: 16px;
+	margin: 0;
+}
+
+#k-map .switch input {
+	display: none;
+}
+
+#k-map .check-slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	-webkit-transition: 0.4s;
+	transition: 0.4s;
+}
+
+#k-map .check-slider:before {
+	position: absolute;
+	content: "";
+	height: 12px;
+	width: 12px;
+	left: 2px;
+	bottom: 2.25px;
+	background-color: white;
+	-webkit-transition: 0.4s;
+	transition: 0.4s;
+}
+
+#k-map input:checked+.check-slider {
+	background-color: #2196f3;
+}
+
+#k-map input:focus+.check-slider {
+	box-shadow: 0 0 1px #2196f3;
+}
+
+#k-map input:checked+.check-slider:before {
+	-webkit-transform: translateX(12px);
+	-ms-transform: translateX(12px);
+	transform: translateX(12px);
+}

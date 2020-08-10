@@ -1,0 +1,478 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'maps/stylesheets/MainPage.css' %}" xmlns="">
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/base/jquery-ui.css" />
+
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+<!--지도관련-->
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="{% static 'maps/assets/js/util.js' %}"></script>
+<script src="{% static 'maps/assets/js/skel.min.js' %}"></script>
+<script src="{% static 'maps/assets/js/main.js' %}"></script>
+<link rel="stylesheet" href="{% static 'maps/assets/css/main.css' %}">
+<link rel="stylesheet" href="{% static 'maps/assets/css/style.css' %}">
+<!--지도관련 끝-->
+
+{% endblock %}
+<script>
+
+</script>
+<!-- body -->
+{% block body %}
+<div class="main-wrapper">
+    <!-- section-1 -->
+    <div class="section section-1">
+        <div class="section-1-background">
+            <video style="position: relative;" id="videobcg" preload="auto" autoplay="true" loop="loop" muted="muted" volume="0">
+                <source src="{% static 'maps/assets/video/koreaMain.mp4' %}" type="video/mp4">
+            </video>
+        </div>
+        <div class = "section-content">
+          <span id="animationSandbox" style="display: block;" class="heartBeat">
+             <p style="font-size: 10vw" class="site__title mega">Travel To Korea</p>
+          </span>
+        </div>
+    </div>
+    <!-- section-2 -->
+    <div class="section section-2" style="padding-top:0px;">
+        <div class="section-content">
+            <div id="left1" style="padding-top:100px">
+                <!--MAP START-->
+                <div id="k-map" class="row">
+                    <div class="6u 12u$(small)">
+                        <div id="main-map" class="map-container">
+                            <div id="observe">
+                                <div id="SelectArea" style="display: none;">지역</div>
+                                <div id="SelectSigungu" style="display: none;">시군구</div>
+                                <select id="latlon" style="display:none" >
+                                    <option value='' selected>--좌표--</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="6u$ 12u$(small)">
+                        <div class="meta">
+                            <div id="ctprvn-nm" class="display"></div>
+                            <div id="sig-nm" class="display"></div>
+                            <div id="emd-nm" class="display"></div>
+                        </div>
+                    </div>
+                </div>
+                <script src="{% static 'maps/assets/js/d3.v5.min.js' %}"></script>
+                <script src="{% static 'maps/assets/js/topojson.min.js' %}"></script>
+                <script src="{% static 'maps/assets/js/kor-map.js'%}"></script>
+                <!--MAP END-->
+            </div>
+
+            <div id="main">
+                <div class="wrapper">
+                    <div class="device_wrapper angled">
+                        <div id="leftdevice" class="device light">
+                            <div class="speaker"></div>
+                            <iframe width="100%" height="400px" src="https://korean.visitkorea.or.kr/main/main.do">이 브라우저는 iframe을 지원하지 않습니다</iframe>
+                        </div>
+                    </div>
+                    <div class="device_wrapper">
+                        <div id="rightdevice"  class="device dark">
+                            <div class="speaker"></div>
+                            <!--테이블 시작-->
+                            <table class="maptable">
+                                <colgroup>
+                                    <col width="12.5%">
+                                    <col width="12.5%">
+                                    <col width="12.5%">
+                                    <col width="12.5%">
+                                    <col width="12.5%">
+                                    <col width="12.5%">
+                                    <col width="12.5%">
+                                    <col width="12.5%">
+                                </colgroup>
+                                <thead>
+                                <!-- checkbox -->
+                                <tr height="30px">
+                                    <div class="checkbox">
+                                        <th id="check_all"><label for="all">전체</label><br><input id="all" type="checkbox" @click="checkAll" v-model="allSelected"></th>
+                                        <th id="check_one" v-for="i in kategorie"><label id="kateName">[[i.name]]</label><br><input type="checkbox" v-model="chk_info" :id="'check_'+i.id" v-on:click="check(i.id)" :value="i.name"></th>
+                                    </div>
+                                </tr>
+                                <!-- dropdown -->
+                                <tr height="30px" >
+                                    <th colspan="4" style="border-bottom:1px solid;border-top:1px solid">
+                                        <select id="region" name="region" @click="changeRegion()">
+                                            <option value="all">전체보기</option>
+                                            [[sigungulist]]
+                                            {% for i in value %}
+                                            <option value="{{i.code}}" >{{i.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </th>
+                                    <th colspan="4" style="border-bottom:1px solid;border-top:1px solid">
+                                        <select id="sigungu" @click="changeSigungu()" disabled>
+                                            <option selected hidden>시군구 선택</option>
+                                            <option v-for="list in sigungulist" id = "listsigungu" :value="list.code">[[list.name]]</option>
+                                        </select>
+                                    </th>
+                                </tr>
+                                </thead>
+                            </table>
+                            <div style="width:100%; height:45vh;overflow:auto;background-color:white;">
+                                <table class="maptable">
+                                    <tbody>
+                                    <tr v-for="list in travelList">
+                                        <td colspan="7" id="scrolltd" style="border-bottom:1px solid;border-color:rgba(0,0,0,0.3);width:300px">
+                                            <a :href="'/maps/detail/'+list.contentId">[[list.title]]</a>
+                                        </td>
+                                        <td style="border-bottom:1px solid;border-color:rgba(0,0,0,0.3);">
+                                            <input :id="'chkBox'+list.contentId" type="checkbox" v-on:change="chk([[list]])">
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!--테이블 끝-->
+                        </div>
+                    </div>
+                    <!--테이블 끝-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- section-3 -->
+    <div class="section section-3">
+        <div class="section-content">
+            <button style="bottom: 40px;right: 10px;position: fixed;width: auto;" class="sign_in_up" onclick="doDisplay()">채팅</button>
+            <iframe style="position:fixed;bottom:80px;width:300px;right:10px;display:none" id="iframe" src="http://service.dongledongle.com/ssafytest" frameborder="0" width="100%" height="500"></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+function doDisplay(){
+    var con = document.getElementById("iframe");
+    if(con.style.display=='none'){
+        con.style.display = 'block';
+    }else{
+        con.style.display = 'none';
+    }
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<script>
+var main = new Vue({
+    el: '#main',
+    delimiters: ['[[', ']]'],
+    data: {
+            tmplist:[],
+            sigungulist:[],
+            selectedoption:[],
+
+            // 여행지목록
+            travelList:[],
+            // 처음 로딩했을 때는 [], 이후 세션에 저장되어 있는 것 포함하여 선택 될 때마다
+            travelsiteList: (window.sessionStorage['travel_site'] == undefined ? [] : window.sessionStorage['travel_site'].split(',')),
+
+            // 아무것도 선택되지 않았을 때
+            allSelected: false,
+            // 선택 될 때마다
+            chk_info:[],
+
+            // 지역, 시군구 코드
+            areacode:'',
+            sigungucode:'',
+
+            kategorie:[
+                { id : '12', name : '관광'},
+                { id : '14', name : '문화'},
+                { id : '15', name : '축제'},
+                { id : '28', name : '야외'},
+                { id : '32', name : '숙박'},
+                { id : '38', name : '쇼핑'},
+                { id : '39', name : '음식'}
+            ],
+            mapinfo:[],
+    },
+    methods:{
+        // 지역 선택시
+        changeRegion : function(){
+            var Select = document.getElementById("region");
+            var SelectArea = Select.options[Select.selectedIndex].text
+            var area = document.getElementById("SelectArea")
+            area.innerText = SelectArea
+            var sigungu = document.getElementById("sigungu")
+
+            this.areacode=Select.value;
+            if(this.areacode=="all"){
+                this.areacode=""
+                this.sigungucode=""
+                sigungu.disabled=true;
+            }
+            if(this.areacode==""){
+                this.sigungulist=[]
+            } else if (this.areacode==8) {
+                sigungu.disabled=true;
+            } else {
+                sigungu.disabled = false;
+                let base_URL = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/areaCode?ServiceKey=jOHhL9XBFjNJN5zQeQnKKKuwBUcaCUsq4eZadEhdbBZ3dmgnYBjpyCKkLixpqIRUvbkT1RHNr3UPSB%2Fwwx29%2BQ%3D%3D&areaCode="+Select.value+"&numOfRows=25&pageNo=1&MobileOS=AND&MobileApp=travel5&_type=json"
+                axios.get(base_URL)
+                    .then(response => {
+                    item = response.data.response.body.items.item
+                    if (typeof(item[0]) === 'object') {
+                        item.forEach((sigungu) => {
+                            this.sigungulist.push(sigungu)
+                        })
+                    } else {
+                        this.sigungulist.push(item)
+                    }
+                    });
+                this.sigungulist=[]
+            }
+            this.gettravel()
+
+            // 지역 선택 세션 저장
+            sessionStorage.setItem('area', this.areacode);
+        },
+
+        // 시군구 선택시
+        changeSigungu: function() {
+            var Select = document.getElementById("sigungu");
+            var SelectSigungu = Select.options[Select.selectedIndex].text
+            var sigungu = document.getElementById("SelectSigungu")
+            sigungu.innerText = SelectSigungu
+
+            this.sigungucode=Select.value
+            if(this.sigungucode=="all"){
+                this.sigungucode=""
+            }
+            this.gettravel()
+
+            // 시군구 선택 세션 저장
+            sessionStorage.setItem('sigungu', Select.options[Select.selectedIndex].value)
+            // sessionStorage.setItem('sigungu', sigungu.innerText)
+        },
+
+        // 전체 체크
+        checkAll: function() {
+            this.chk_info = [];
+            this.selectedoption=[];
+            this.travelList=[];
+
+            if (!this.allSelected) {
+                for (chk in this.kategorie) {
+                    this.chk_info.push(this.kategorie[chk].name.toString());
+                    this.selectedoption=["12","14","15","28","32","38","39"]
+                }
+                this.gettravel()
+                // 전체 선택했을 때 세션 저장
+                sessionStorage.setItem('kategory', this.selectedoption);
+            } else {
+                sessionStorage.removeItem('kategory')
+                sessionStorage.setItem('kategory', []);
+            }
+            console.log(Object.values(this.selectedoption))
+        },
+
+        // 체크시 값 출력
+        check: function(value) {
+            this.allSelected=false
+
+            var selectbar = document.getElementById("latlon")
+            selectbar.name = value
+
+            if (Object.values(this.selectedoption).includes(value)) {
+                this.selectedoption.splice(this.selectedoption.indexOf(value), 1)
+            } else {
+                this.selectedoption.push(value)
+            }
+            // console.log(Object.values(this.selectedoption))
+
+            // 카테고리 선택 세션 저장
+            sessionStorage.setItem('kategory', this.selectedoption);
+
+            // 모든 옵션 다 선택되면 '전체' 버튼 선택되도록
+            if (this.selectedoption.length === 7) {
+                this.checkAll()
+                this.allSelected = true;
+            }
+            this.gettravel()
+        },
+
+        // 여행지 정보 가져오기
+        gettravel: function() {
+            if(this.sigungucode==""){
+                if(this.areacode==""){
+                    for(i in this.selectedoption){
+                        let base_URL="/maps/category/"+this.selectedoption[i]+"/"
+                        axios.get(base_URL)
+                         .then(response => {
+                             item = response.data
+                             item.forEach((travel) => {
+                                this.travelList.push(travel)
+                             });
+                         });
+                    }
+                    this.travelList=[]
+                } else {
+                    for(i in this.selectedoption){
+                        let base_URL="/maps/area/"+this.areacode+"/category/"+this.selectedoption[i]+"/"
+                        axios.get(base_URL)
+                         .then(response => {
+                             item = response.data
+                             item.forEach((travel) => {
+                                this.travelList.push(travel)
+                             });
+                         });
+                    }
+                    this.travelList=[]
+                }
+            } else {
+                for(i in this.selectedoption){
+                    let base_URL="/maps/area/"+this.areacode+"/sigungu/"+this.sigungucode+"/category/"+this.selectedoption[i]+"/"
+                    axios.get(base_URL)
+                    .then(response => {
+                         item = response.data
+                         item.forEach((travel) => {
+                            this.travelList.push(travel)
+                         });
+                    });
+                }
+                this.travelList=[]
+            }
+         },
+
+        //  여행지 체크
+        chk: function(list) {
+         var selectbar = document.getElementById("latlon")
+            var xx=""
+            var yy=""
+            var c_id=""
+            var nowCate = ""
+            var chkBox = ""
+            console.log(list['__proto__'].constructor)
+            console.log(list['__proto__'].constructor ==  Array)
+            if(list['__proto__'].constructor == Array){
+                c_id = list[0][0].contentId
+                this.mapinfo.push({mapx: list[0][0].mapx, mapy: list[0][0].mapy})
+                nowCate = list[0][0]['category']
+                chkBox = document.getElementById(`chkBox${list[0][0].contentId}`).checked
+                xx=list[0][0].mapx
+                yy=list[0][0].mapy
+            }else{
+                c_id = list.contentId
+                nowCate = list.category
+                console.log(list)
+                this.mapinfo.push({mapx: list.mapx, mapy: list.mapy})
+                chkBox = document.getElementById(`chkBox${list.contentId}`).checked
+                xx=list.mapx
+                yy=list.mapy
+            }
+
+            if (chkBox === true) {
+                this.travelsiteList.push(c_id)
+                console.log(this.travelsiteList)
+
+                var exists = false;
+
+                for (var i=0; i < selectbar.length; i++) {
+                    if (selectbar[i].value == xx) {
+                       exists = true;
+                    }
+                }
+
+                if (exists == false) {
+                    selectbar.name = nowCate
+                    var optAdd = document.createElement("option")
+                    optAdd.value = xx
+                    optAdd.text = yy
+                    selectbar.options.add(optAdd)
+                }
+            } else {
+                for (var i=0; i < selectbar.length; i++) {
+                    if (selectbar[i].value == xx) {
+                       selectbar.remove(i)
+                    }
+                }
+                for(i in this.travelsiteList){
+                    if (c_id == this.travelsiteList[i]){
+                        this.travelsiteList.splice(i, 1)
+                    }
+                }
+            }
+            // 여행지 세션 저장
+            sessionStorage.setItem('travel_site', this.travelsiteList)
+        },
+    },
+    mounted() {
+        if (window.sessionStorage) {
+             // 지역 선택 상태유지
+             setTimeout(function() {
+                var sessionarea = window.sessionStorage['area']
+                var a = document.getElementById('region').options
+                for( i in a ){
+                    if(a[i].value==sessionarea){
+                        a[i].selected = true
+                        a[i].click()
+                        break
+                    }
+                }
+
+                // 시군구 선택 상태유지
+                setTimeout(function() {
+                       var sessionsigungu = window.sessionStorage['sigungu']
+                       var b = document.getElementById('sigungu').options[sessionsigungu]
+                       b.selected = true
+                       b.click()
+
+                        setTimeout(function() {
+
+                            // 옵션 전체 선택 상태유지
+                            var option_list=sessionStorage.kategory.split(',')
+                            if (option_list.length == 7) {
+                                document.getElementById("all").checked = true
+                                this.allSelected = true
+                            }
+
+                            // 옵션선택 상태유지
+                            else{
+                                this.allSelected = false
+                            }
+                            for(i in option_list) {
+                                    for(j in window.main.kategorie) {
+                                        if(option_list[i] == window.main.kategorie[j].id){
+                                            window.main.chk_info.push(window.main.kategorie[j].name)
+                                            window.main.selectedoption.push(window.main.kategorie[j].id)
+                                            window.main.gettravel()
+                                        }
+                                    }
+                                }
+                            // 여행지 선택 상태유지
+                            setTimeout(function() {
+                                var travel_list = sessionStorage['travel_site'].split(',')
+                                    for(var i = 0; i < travel_list.length; i++) {
+                                         for (var j = 0; j < window.main.travelList.length; j++){
+                                            if (travel_list[i] == window.main.travelList[j].contentId) {
+                                                var st = travel_list[i]
+                                                document.getElementById(`chkBox${st}`).checked = true
+                                                console.log(window.main.travelList[j])
+                                                window.main.chk(window.main.travelList[j])
+                                            }
+                                        }
+                                    }
+                            }, 500)
+                        },300)
+                   }, 400)
+               }, 200)
+        }
+    },
+});
+
+</script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+{% endblock %}

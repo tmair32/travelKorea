@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+{% endblock %}
+
+{% block body %}
+<form class="modal-contentsignup" method="POST">
+    <h1 style="text:bold">로그인</h1>
+    <hr>
+    {% csrf_token %}
+    {{ signin_form }}
+    <div class="clearfix">
+    <button style="padding:5px" type="submit" class="signupbtn">Sign In</button>
+    <button style="padding:5px" type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Cancel</button>
+    </div>
+</form>
+
+{% endblock %}

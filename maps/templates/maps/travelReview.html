@@ -1,0 +1,246 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}DetailPage{% endblock %}
+{% block css %}
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900%7CMaterial+Icons" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'maps/stylesheets/travelReview.css' %}">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+{% endblock %}
+
+
+<!-- body -->
+{% block body %}
+<div id="review" class="container" style="margin:0;">
+    <div>
+        <div class="imgbanner">
+            <!--<img src="https://source.unsplash.com/1600x400/?korea" width="6.25%">-->
+            <img src="{% static 'maps/img/banner3.jpg' %}" width="100%">
+        </div>
+        <div class="usercontent">
+            <h1>여행 후기</h1>
+        </div>
+    </div>
+
+    <div>
+        <div class="searchbar" style="text-align:center">
+            <p>
+            <table style="padding-top:0px">
+                <tr>
+                    <td style="background-color:white;">
+                        <select style="width:100%;height:30px" id="region" name="region" >
+                            <option value="all">전체보기</option>
+                            {% for i in value %}
+                            <option value="{{i.code}}" >{{i.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td style="background-color:white;">
+                        <input style="width:30vw;padding:5px;font-size:15px;height:30px" type="text" placeholder="Search.." name="search" id="search">
+                        <button v-on:click="filtering()"><i style="padding:10px;" class="fa fa-search"></i></button>
+                    </td>
+                </tr>
+            </table>
+            </p>
+        </div>
+        <div class="wrap-table100">
+            <div class="table100">
+                <table width="100%" style="padding-top:0px">
+                    <colgroup>
+                        <col width="160px">
+                        <col width="50%">
+                        <col width="10%">
+                        <col width="10%">
+                        <col width="10%">
+                    </colgroup>
+                    <thead>
+                    <tr class="table100-head">
+                        <th class="column1">여행지명</th>
+                        <th class="column2">한줄평</th>
+                        <th class="column3">닉네임</th>
+                        <th class="column4">평점</th>
+                        <th class="column5">삭제</th>
+                    </tr>
+                    </thead>
+                    <tbody v-if="filterList.length != 0">
+                    <tr v-for="(list,i) in filterList">                      
+                        <td><a :href="'/maps/detail/'+list.contentId">[[ titleList[i] ]]</a></td>
+                        <td>[[ list.content ]]</td>
+                        <td>[[ list.user ]]</td>
+                        <td><meter min="0" max="5" :value="[[list.score]]" /></td>
+                        <td style="text-align:center">
+                            {% if user == admin %}
+                            <a href="/maps/travelreview/delete">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
+                            {% elif user == score.user %}
+                            <a href="/maps/travelreview/delete/{{score.inform.contentId}}">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    </tbody>
+
+                    <tbody v-else>
+                    {% for score in scores %}
+                    <tr>
+                        <td><a href="{% url 'maps:detailpage' score.inform.contentId  %}">{{ score.inform.title }}</a></td>
+                        <td>{{ score.content }}</td>
+                        <td>{{ score.user.username }}</td>
+                        <td><meter min="0" max="5" value="{{score.score}}" /></td>
+                        <td style="text-align:center">
+                            {% if user == admin %}
+                            <a href="/maps/travelreview/delete">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
+                            {% elif user == score.user %}
+                            <a href="/maps/travelreview/delete/{{score.inform.contentId}}">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <p style="text-align:center">
+                    {% for page in total_page %}
+                    <a class="sign_in_up" style="color: white; text-decoration: none;width:auto;min-width:30px" {% if cur_page != page %} href="?page={{page}}" {% endif %}>
+                        <span {% if cur_page == page %} style="font-bold;margin-bottom:15px" {% endif %}>{{page}}</span>
+                    </a>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+        <div class="section section-3">
+            <div class="section-content">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+var review = new Vue ({
+            el: '#review',
+            delimiters: ['[[', ']]'],
+            data() {
+                return{
+                    reviewList:[],
+                    filterList:[],
+                    titleList:[],
+                    msg:""
+                }
+            },
+            mounted(){
+                axios.get('/maps/score/')
+                .then(response => {
+                    item = response.data
+                    item.forEach((list) => {
+                        this.reviewList.push(list)
+                    })
+                })
+            },
+            methods: {
+                filtering(){
+                    this.titleList=[]
+                    this.filterList=[]
+
+                    filterRegion = document.getElementById("region").value
+                    filterText = document.getElementById("search").value
+                    if(filterRegion == "all"){
+                        filterRegion=""
+                        this.filterList=[]
+                        this.titleList=[]
+                        this.msg=""
+                    }
+                    if(filterRegion != "" && filterText == ""){
+                         tmpList=this.reviewList
+                         console.log("지역만 있을 때")
+                         alert("검색어를 입력하세요")
+                         tmpList.forEach((item, index) => {
+                            url = "/maps/contentid/"+tmpList[index].contentId+"/"
+                            axios.get(url)
+                            .then(response=>{
+                                    //지역비교
+                                    if(filterRegion == response.data[0].area){
+                                        this.filterList.push(tmpList[index])
+                                        this.titleList.push(response.data[0].title)
+                                    }
+                            })
+                            .then(response=>{
+                                if(this.filterList['__ob__'].length == 0){
+                                    alert("검색결과가 없습니다.")
+                                    document.getElementById("search").value=""
+                                    document.getElementById("region").value="all"
+                                }
+                            })
+                         })
+                    }else if(filterRegion !="" && filterText != ""){
+                        tmpList=[]
+                         console.log("지역도 있고 텍스트도 있을 때")
+                         //텍스트로 거름
+                         for( i in this.reviewList ){
+                             if(this.reviewList[i].content.includes(filterText)){
+                                tmpList.push(this.reviewList[i])
+                             }
+                         }
+                         //텍스트로 걸러진게 있으면
+                         if(tmpList.length != 0){
+                             tmpList.forEach((item, index) => {
+                                url = "/maps/contentid/"+tmpList[index].contentId+"/"
+                                axios.get(url)
+                                .then(response=>{
+                                        //지역비교
+                                        if(filterRegion == response.data[0].area){
+                                            this.filterList.push(tmpList[index])
+                                            this.titleList.push(response.data[0].title)
+                                        }
+                                })
+                                .then(response=>{
+                                    if(this.filterList.length == 0){
+                                        alert("검색결과가 없습니다.")
+                                        document.getElementById("search").value=""
+                                        document.getElementById("region").value="all"
+                                    }
+                                })
+                             })
+                         }else{
+                            alert("검색결과가 없습니다.")
+                            document.getElementById("search").value=""
+                            document.getElementById("region").value="all"
+                         }
+                    }else if(filterRegion == ""){
+                        if(filterText != ""){
+                            console.log("지역은 없고 텍스트는 있을 때")
+                            this.reviewList.forEach((item, index) => {
+                                if(this.reviewList[index].content.includes(filterText)){
+                                    this.filterList.push(this.reviewList[index])
+                                    url = "/maps/contentid/"+this.reviewList[index].contentId+"/"
+                                    axios.get(url)
+                                    .then(response=>{
+                                        this.titleList.push(response.data[0].title)
+                                    })
+                                    .then(response=>{
+                                        if(this.filterList.length == 0){
+                                            alert("검색결과가 없습니다.")
+                                            document.getElementById("search").value=""
+                                            document.getElementById("region").value="all"
+                                        }
+                                    })
+                                }
+                            })
+                            if(this.filterList.length == 0){
+                                alert("검색결과가 없습니다.")
+                                document.getElementById("search").value=""
+                                document.getElementById("region").value="all"
+                            }
+                        }
+                    }
+                },
+            },
+});
+</script>
+{% endblock %}

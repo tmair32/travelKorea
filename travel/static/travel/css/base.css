@@ -1,0 +1,371 @@
+* {
+  box-sizing: border-box;
+}
+
+
+
+body,
+html {
+  margin : 0px;
+  min-width: 330px;
+  height: 100%;
+  width : 100%;
+  font-size: 16px;
+  font-weight: 400;
+  color: #272727;
+  font-family: "Roboto", sans-serif
+}
+
+a {
+  text-decoration: none;
+  cursor: pointer;
+  color: inherit;
+}
+
+hr{
+    margin:0;
+}
+
+a:hover {
+  text-decoration: underline;
+  opacity: 0.7;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+
+h2 {
+  font-size: 42px;
+  font-weight: 700;
+  word-break: keep-all;
+}
+
+h3 {
+  font-size: 36px;
+}
+
+h4 {
+  font-size: 28px;
+}
+
+p {
+  line-height: 1.5;
+}
+
+button {
+  border: none;
+  cursor: pointer;
+}
+
+button:active,
+button:hover,
+button:focus {
+  outline: 0;
+}
+
+/* header */
+.header-wrapper {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  height: 50px;
+}
+
+.active.header-wrapper {
+  -webkit-box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 40px 0 rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+.header-contents {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: 30px;
+  height: 50px;
+  text-align: left;
+}
+
+.title {
+  color: #fff;
+  font-weight: 600;
+/*  line-height: 78px; */ /*지도 지명표시 버튼 옆 글자 밀림 방지*/
+  cursor: pointer;
+  font-size: 16px;
+  display: inline-block;
+}
+
+.active .title {
+  color: #272727;
+}
+
+.nav-bar {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  color: #fff;
+}
+
+.active .nav-bar {
+  color: #272727;
+}
+
+.nav-bar ul {
+    margin:15px;
+}
+
+.nav-bar li {
+  display: inline-block;
+  /*line-height: 78px;*/ /*정원이가 부탁한 헤더라인*/
+  font-size: 16px;
+  font-weight: 400;
+  margin-right: 30px;
+}
+
+.nav-bar li:last-child {
+  margin: 0;
+}
+
+.main-wrapper {
+  position: relative;
+  height: 100%;
+}
+
+.section {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+/*  display: flex;*/
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 100%;
+  height: auto;
+  text-align: center;
+ /* padding: 0 32px;*/
+  overflow: hidden;
+}
+
+.section-content {
+  position: relative;
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* section-1 */
+.section-1 {
+  -webkit-transform: translateY(0%);
+  -ms-transform: translateY(0%);
+  transform: translateY(0%);
+  padding-top: 50px;
+  height: auto;
+  color: #fff;
+}
+
+.section-1-background {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.boxed {
+	background-color: rgba(1, 1, 1, 0.3);
+  margin : 10px;
+  position: absolute;
+}
+
+
+
+/* section-2 */
+.section-2 {
+  height: 100%;
+  padding-top:50px;
+  padding-bottom:100px;
+  background-color: #fff;
+}
+
+.section-2 > .section-content > div {
+  width: 90%;
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+}
+
+
+/* section-3 */
+.section-3 {
+  height: unset;
+  padding: 40px 15px;
+  position: relative;
+  background: #004080;
+  color: #fff;
+}
+
+.section-3 .section-content {
+  text-align: center;
+}
+
+
+/* footer */
+.footer {
+  background-color: #272727;
+  color: #fff;
+  position: fixed;
+  text-align: center;
+  width:100%;
+  bottom:0px
+}
+
+.footer p {
+    margin:5px;
+}
+
+
+/* 메인페이지 CSS*/
+.leftTable{
+    z-index:0;
+}
+
+.rightTable{
+    z-index:0;
+    margin-top:10px;
+}
+
+/*오른쪽 테이블에 1번째 row = rt1Row*/
+.rt2Row1Col{
+    border:2px solid rgba(0, 0, 0, .5);
+}
+.rt2Row2Col{
+    border:2px solid rgba(0, 0, 0, .5);
+}
+
+.rt3Row1Col{
+    border:2px solid rgba(0, 0, 0, .5);
+}
+
+
+#left1{
+    float: left;
+    width: 49%;
+}
+
+#detailLeft1{
+    float: left;
+    width: 59%;
+}
+
+#detailRight1{
+    float: right;
+    width: 40%;
+}
+
+#right1,#main{
+   float: right;
+   width: 49%;
+}
+
+#left2{
+    float: left;
+    width: 49%;
+}
+#right2{
+   float: right;
+   width: 49%;
+}
+
+/*반응형 디자인*/
+#toggle, #menu{
+    display:none;
+}
+
+/*스코어 테이블*/
+    #scoreTable1{
+        float: left;
+        width: 30%;
+    }
+    #scoreTable2{
+        float: right;
+        width: 69%;
+    }
+
+@media screen and (max-width: 900px) {
+
+        #left1 {
+          display :none;
+        }
+        #detailLeft1{
+            width: 100%;
+        }
+        #detailRight1{
+        margin-top:10px;
+            width: 100%;
+        }
+
+         #right1,#main {
+          width: 100%;
+        }
+
+        #left2 {
+          width: 100%;
+        }
+
+        #right2 {
+          width: 100%;
+        }
+
+        /*헤더 메뉴*/
+        #nav{
+            display:none;
+        }
+
+        #menu{
+            display:grid;
+            margin:15px;
+        }
+
+        #toggle:checked + #nav{
+            display:grid;
+            padding:10px;
+        }
+
+        #nav{
+            background: rgba(0,0,0,0.3);
+        }
+
+        .nav-bar li {
+            padding:15px
+        }
+
+        /*스코어 테이블*/
+        #scoreTable1{
+            width: 100%;
+        }
+        #scoreTable2{
+            width: 100%;
+            margin-top:20px;
+        }
+}
+
+
+
+
+
+    #tmCopyright{
+        display:none;
+    }
+
+    .tmHead{
+        display:none;
+    }

@@ -1,0 +1,422 @@
+{% load socialaccount %}
+{% providers_media_js %}
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+<!-- social Login start -->
+/* style the container */
+.container {
+  position: relative;
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  padding: 20px 0 30px 0;
+}
+
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/* vertical line */
+.vl {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
+  border: 2px solid #ddd;
+  height: 175px;
+}
+
+/* text inside the vertical line */
+.vl-innertext {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  padding: 8px 10px;
+}
+
+/* hide some text on medium and large screens */
+.hide-md-lg {
+  display: none;
+}
+
+/* bottom container */
+.bottom-container {
+  text-align: center;
+  background-color: #666;
+  border-radius: 0px 0px 4px 4px;
+}
+
+/* Responsive layout - when the screen is less than 650px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 650px) {
+  .col {
+    width: 100%;
+    margin-top: 0;
+  }
+  /* hide the vertical line */
+  .vl {
+    display: none;
+  }
+  /* show the hidden text on small screens */
+  .hide-md-lg {
+    display: block;
+    text-align: center;
+  }
+}
+<!-- social Login end -->
+body {font-family: Arial, Helvetica, sans-serif;}
+
+
+
+/* Center the image and position the close button */
+.imgcontainer {
+  text-align: center;
+  margin: 24px 0 12px 0;
+  position: relative;
+}
+
+.container {
+  margin: 16px;
+}
+
+span.psw {
+  float: right;
+  padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+  overflow: auto; /* Enable scroll if needed */
+}
+
+/* Modal Content/Box */
+.modal-contentsigninup {
+  background-color: #fefefe;
+  margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+  border: 1px solid #888;
+  width: 500px; /* Could be more or less, depending on screen size */
+  padding:20px;
+}
+
+
+.signInClose:hover,
+.signInClose:focus {
+  color: red;
+  cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+  -webkit-animation: animatezoom 0.6s;
+  animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+  from {-webkit-transform: scale(0)}
+  to {-webkit-transform: scale(1)}
+}
+
+@keyframes animatezoom {
+  from {transform: scale(0)}
+  to {transform: scale(1)}
+}
+
+.genderradio{
+  margin-top:10px;
+  margin-bottom:10px;
+}
+
+.sign_in_up {
+	-moz-box-shadow:inset 0px 1px 0px 0px #97c4fe;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #97c4fe;
+	box-shadow:inset 0px 1px 0px 0px #97c4fe;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #3d94f6), color-stop(1, #004080));
+	background:-moz-linear-gradient(top, #3d94f6 5%, #004080 100%);
+	background:-webkit-linear-gradient(top, #3d94f6 5%, #004080 100%);
+	background:-o-linear-gradient(top, #3d94f6 5%, #004080 100%);
+	background:-ms-linear-gradient(top, #3d94f6 5%, #004080 100%);
+	background:linear-gradient(to bottom, #3d94f6 5%, #004080 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#3d94f6', endColorstr='#004080',GradientType=0);
+	background-color:#3d94f6;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #337fed;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #1570cd;
+	width:49%;
+}
+.sign_in_up:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #004080), color-stop(1, #3d94f6));
+	background:-moz-linear-gradient(top, #004080 5%, #3d94f6 100%);
+	background:-webkit-linear-gradient(top, #004080 5%, #3d94f6 100%);
+	background:-o-linear-gradient(top, #004080 5%, #3d94f6 100%);
+	background:-ms-linear-gradient(top, #004080 5%, #3d94f6 100%);
+	background:linear-gradient(to bottom, #004080 5%, #3d94f6 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#004080', endColorstr='#3d94f6',GradientType=0);
+	background-color:#004080;
+}
+.sign_in_up:active {
+	position:relative;
+	top:1px;
+}
+
+
+
+.cancel {
+	-moz-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #ffffff;
+	box-shadow:inset 0px 1px 0px 0px #ffffff;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #f9f9f9), color-stop(1, #e9e9e9));
+	background:-moz-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+	background:-webkit-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+	background:-o-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+	background:-ms-linear-gradient(top, #f9f9f9 5%, #e9e9e9 100%);
+	background:linear-gradient(to bottom, #f9f9f9 5%, #e9e9e9 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#f9f9f9', endColorstr='#e9e9e9',GradientType=0);
+	background-color:#f9f9f9;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #dcdcdc;
+	display:inline-block;
+	cursor:pointer;
+	color:#666666;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:10px 30px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #ffffff;
+	padding:5px;
+	width:49%;
+}
+.cancel:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #e9e9e9), color-stop(1, #f9f9f9));
+	background:-moz-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);
+	background:-webkit-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);
+	background:-o-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);
+	background:-ms-linear-gradient(top, #e9e9e9 5%, #f9f9f9 100%);
+	background:linear-gradient(to bottom, #e9e9e9 5%, #f9f9f9 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#e9e9e9', endColorstr='#f9f9f9',GradientType=0);
+	background-color:#e9e9e9;
+}
+.cancel:active {
+	position:relative;
+	top:1px;
+}
+
+.socialbutton{
+  width:30px;
+  margin:0 10px 0 10px;
+}
+
+.sign_in_up_input{
+  padding:10px;
+  font-size:20px;
+  width:100%;
+  margin : 3px;
+  background-color:rgba(0,0,0,0.1);
+}
+.idcheck {
+	-moz-box-shadow:inset 0px 39px 0px -24px #e67a73;
+	-webkit-box-shadow:inset 0px 39px 0px -24px #e67a73;
+	box-shadow:inset 0px 39px 0px -24px #e67a73;
+	background-color:#e4685d;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	border-radius:4px;
+	border:1px solid #ffffff;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	padding:6px 6px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #b23e35;
+}
+.idcheck:hover {
+	background-color:#eb675e;
+}
+.idcheck:active {
+	position:relative;
+	top:1px;
+}
+
+
+@media screen and (max-width: 700px) {
+  .modal-contentsigninup {
+    width: 350px;
+  }
+
+   .modal-contentsignup {
+    width: 350px;
+  }
+
+  .sign_in_up{
+    width:100%;
+  }
+
+  .cancel{
+    width:100%;
+  }
+
+  .socialbutton{
+    width: 30%;
+    margin:0px;
+  }
+}
+.okbutton {
+	-moz-box-shadow:inset 0px 1px 0px 0px #a4e271;
+	-webkit-box-shadow:inset 0px 1px 0px 0px #a4e271;
+	box-shadow:inset 0px 1px 0px 0px #a4e271;
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #89c403), color-stop(1, #77a809));
+	background:-moz-linear-gradient(top, #89c403 5%, #77a809 100%);
+	background:-webkit-linear-gradient(top, #89c403 5%, #77a809 100%);
+	background:-o-linear-gradient(top, #89c403 5%, #77a809 100%);
+	background:-ms-linear-gradient(top, #89c403 5%, #77a809 100%);
+	background:linear-gradient(to bottom, #89c403 5%, #77a809 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#89c403', endColorstr='#77a809',GradientType=0);
+	background-color:#89c403;
+	-moz-border-radius:6px;
+	-webkit-border-radius:6px;
+	border-radius:6px;
+	border:1px solid #74b807;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:6px 24px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #528009;
+}
+.okbutton:hover {
+	background:-webkit-gradient(linear, left top, left bottom, color-stop(0.05, #77a809), color-stop(1, #89c403));
+	background:-moz-linear-gradient(top, #77a809 5%, #89c403 100%);
+	background:-webkit-linear-gradient(top, #77a809 5%, #89c403 100%);
+	background:-o-linear-gradient(top, #77a809 5%, #89c403 100%);
+	background:-ms-linear-gradient(top, #77a809 5%, #89c403 100%);
+	background:linear-gradient(to bottom, #77a809 5%, #89c403 100%);
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#77a809', endColorstr='#89c403',GradientType=0);
+	background-color:#77a809;
+}
+.okbutton:active {
+	position:relative;
+	top:1px;
+}
+
+
+
+</style>
+</head>
+<body>
+
+<div id="id01" class="modal">
+
+  <form class="modal-contentsigninup animate" action="/myaccounts/login/" method="POST">
+    {% csrf_token %}
+    <div class="imgcontainer">
+    </div>
+
+    <div class="container">
+      <div style="padding-left:60px;padding-right:60px">
+        <h2 style="text-align:center;width:100%;">로그인</h2>
+        <hr>
+
+        <div id="signincheck" style="margin:auto">
+          <p style="text-align:center">
+            <a href="{% provider_login_url 'kakao' %}" class="kakao btn">
+              <img class="socialbutton" src="{% static 'accounts/img/kakao.png' %}">
+            </a>
+            <a href="{% provider_login_url 'google' %}" class="google btn" >
+              <img class="socialbutton" src="{% static 'accounts/img/google.png' %}" >
+            </a>
+            <a href="{% provider_login_url 'naver' %}" class="naver btn">
+              <img class="socialbutton" src="{% static 'accounts/img/naver.png' %}">
+            </a>
+          </p>
+          <hr>
+          <input class="sign_in_up_input" v-model="email" type="text" name="email" placeholder="Email" required><br>
+          <input  class="sign_in_up_input" type="password" name="password" placeholder="Password" required>
+          <p>[[ msg ]]</p>
+          <input type="submit" class="sign_in_up" value="Sign In">
+          <input type="button" onclick="document.getElementById('id01').style.display='none'" class="cancel" value="Cancel">
+        </div>
+      </div>
+    </div>
+</form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+// Get the modal
+var modal = document.getElementById('id01');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+// social login check
+const app2 = new Vue ({
+  el:"#signincheck",
+  delimiters: ['[[', ']]'],
+  data: {
+    msg:'',
+    email:'',
+  },
+  methods: {
+    checkemail() {
+      url = '/myaccounts/user'
+      axios.get(url).then(response => {
+        console.log(response)
+        response.data.forEach(user => {
+          console.log(user)
+          if (this.email == user.email && user.first_name) {
+            this.msg = "소셜 로그인 이용자입니다. 소셜 로그인을 이용해주세요."
+          }
+        })
+      })
+    }
+  },
+  watch: {
+    email: function() {
+      this.checkemail()
+    }
+  }
+})
+
+</script>
+
+</body>
+</html>
